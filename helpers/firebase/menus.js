@@ -20,5 +20,19 @@ module.exports = {
     } catch (e) {
       throw new Error(e.message)
     }
+  },
+  createMenu: async (image,name,max,price,time) => {
+    try {
+      let newMenu = await dbMenus.add({
+        image: image,
+        name: name,
+        max : +max,
+        price: +price,
+        time : +time
+      })
+      return {id: newMenu.id, ...newMenu.data()}
+    } catch(e) {
+      throw new Error(e.message)
+    }
   }
 };

@@ -3,6 +3,7 @@ require('firebase/auth');
 require('firebase/firestore');
 require('firebase/database');
 require('firebase/storage');
+require('dotenv').config()
 
 const config = {
   apiKey: process.env.FIREBASE_API_KEY,
