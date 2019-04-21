@@ -30,7 +30,7 @@ module.exports = {
         price: +price,
         time : +time
       })
-      return {id: newMenu.id, ...newMenu.data()}
+      return {id: newMenu.id}
     } catch(e) {
       throw new Error(e.message)
     }
