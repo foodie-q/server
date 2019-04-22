@@ -27,5 +27,15 @@ module.exports = {
     } catch (e) {
       throw new Error(e.message)
     }
+  },
+  createSaldo: async (objCreate) => {
+    try {
+      let saldo = await dbSaldo.add(objCreate)
+      if (saldo) {
+        return true
+      }
+    } catch (error) {
+      throw new Error(error.message)      
+    }
   }
 };

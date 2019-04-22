@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createOrder } = require('../helpers/firebase/orders')
 const { dbUsers, auth } = require('../helpers/firebase/index')
-const { getSaldo, findById } = require('../helpers/firebase/users')
+const { getSaldo, findById, createSaldo } = require('../helpers/firebase/users')
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -110,6 +110,18 @@ router.get('/:id', function (req, res, next) {
   findById(req.params.id)
     .then(user => {
       res.status(200).json(user)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+router.post('/saldo', function (req, res, next) {
+  console.log(req.body,'<<<<,,');
+  
+  createSaldo({ ...req.body.payload, userId: dbUsers.doc(req.body.payload.userId) })
+    .then(saldo => {
+      res.status(200).json(saldo)
     })
     .catch(err => {
       res.status(500).json(err)
