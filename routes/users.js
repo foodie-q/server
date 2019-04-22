@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createOrder } = require('../helpers/firebase/orders')
 const { dbUsers, auth } = require('../helpers/firebase/index')
-const { getSaldo } = require('../helpers/firebase/users')
+const { getSaldo, findById } = require('../helpers/firebase/users')
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -10,7 +10,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/register', function (req, res, next) {
-  
+
   auth.createUserWithEmailAndPassword(req.body.email, req.body.password)
     .then(user => {
       console.log(user.user.uid)
@@ -25,14 +25,14 @@ router.post('/register', function (req, res, next) {
     })
     .then(() => {
       auth.onAuthStateChanged(firebaseUser => {
-        if(firebaseUser) {
+        if (firebaseUser) {
           dbUsers.doc(firebaseUser.uid).get()
-          .then(user => {
-            res.status(201).json(user.data())
-          })
-          .catch(err => {
-            throw new Error(err.message)
-          })
+            .then(user => {
+              res.status(201).json(user.data())
+            })
+            .catch(err => {
+              throw new Error(err.message)
+            })
         }
       })
     })
@@ -40,7 +40,7 @@ router.post('/register', function (req, res, next) {
       console.log(err)
       res.status(500).json(err)
     })
-    
+
 })
 
 router.post('/login', function (req, res, next) {
@@ -49,15 +49,15 @@ router.post('/login', function (req, res, next) {
       // console.log(user.user)
       // res.status(200).json({ uid: user.user.uid})
       auth.onAuthStateChanged(firebaseUser => {
-        if(firebaseUser) {
+        if (firebaseUser) {
           // res.status(200).json(firebaseUser)
           dbUsers.doc(firebaseUser.uid).get()
-          .then(user => {
-            res.status(200).json(user.data())
-          })
-          .catch(err => {
-            throw new Error(err.message)
-          })
+            .then(user => {
+              res.status(200).json(user.data())
+            })
+            .catch(err => {
+              throw new Error(err.message)
+            })
         }
       })
     })
@@ -67,12 +67,12 @@ router.post('/login', function (req, res, next) {
     })
 })
 
-router.get('/logout', function(req,res,next) {
+router.get('/logout', function (req, res, next) {
   auth.onAuthStateChanged(firebaseUser => {
-    if(firebaseUser) {
+    if (firebaseUser) {
       auth.signOut()
         .then(() => {
-          res.status(200).json({message:`user ${firebaseUser.email} successs log out`})
+          res.status(200).json({ message: `user ${firebaseUser.email} successs log out` })
         })
         .catch(err => {
           console.log(err)
@@ -80,10 +80,10 @@ router.get('/logout', function(req,res,next) {
         })
     }
     else {
-      res.status(200).json({message:'no one log in'})
+      res.status(200).json({ message: 'no one log in' })
     }
   })
-  
+
 })
 
 router.get('/saldo/:id', function (req, res, next) {
@@ -100,6 +100,16 @@ router.post('/order', function (req, res, next) {
   createOrder(req.body.payload)
     .then(newOrder => {
       res.status(200).json(newOrder)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+router.get('/:id', function (req, res, next) {
+  findById(req.params.id)
+    .then(user => {
+      res.status(200).json(user)
     })
     .catch(err => {
       res.status(500).json(err)
