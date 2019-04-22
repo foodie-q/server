@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {dbUsers, auth} = require('../helpers/firebase/index')
+const { createOrder } = require('../helpers/firebase/orders')
+const { dbUsers, auth } = require('../helpers/firebase/index')
+const { getSaldo } = require('../helpers/firebase/users')
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -84,5 +86,24 @@ router.get('/logout', function(req,res,next) {
   
 })
 
+router.get('/saldo/:id', function (req, res, next) {
+  getSaldo(req.params.id)
+    .then(saldo => {
+      res.status(200).json(saldo)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+router.post('/order', function (req, res, next) {
+  createOrder(req.body.payload)
+    .then(newOrder => {
+      res.status(200).json(newOrder)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
 
 module.exports = router;

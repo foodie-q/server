@@ -1,4 +1,4 @@
-const {dbOrders} = require('./index');
+const { dbOrders } = require('./index');
 
 const menus = require('./menus');
 const users = require('./users');
@@ -9,7 +9,7 @@ module.exports = {
       const orders = await dbOrders.where("status", "==", 0).get();
       return Promise.all(
         orders.docs.map(async (doc) => {
-          let order = {id: doc.id, ...doc.data()};
+          let order = { id: doc.id, ...doc.data() };
           order['menu'] = await menus.findById(order.menuId.id);
           order['user'] = await users.findById(order.userId.id);
 
@@ -28,7 +28,7 @@ module.exports = {
       const orders = await dbOrders.where("status", "==", 1).get();
       return Promise.all(
         orders.docs.map(async (doc) => {
-          let order = {id: doc.id, ...doc.data()};
+          let order = { id: doc.id, ...doc.data() };
           order['menu'] = await menus.findById(order.menuId.id);
           order['user'] = await users.findById(order.userId.id);
 
@@ -45,9 +45,21 @@ module.exports = {
   findById: async (orderId) => {
     try {
       let order = await dbOrders.doc(orderId).get();
-      return {id: order.id, ...order.data()};
+      return { id: order.id, ...order.data() };
     } catch (e) {
       throw new Error(e.message)
+    }
+  },
+  createOrder: async (payload) => {
+    try {
+      let data = await dbOrders.add(payload)
+      if (data) {
+        return true
+      }
+    }
+    catch (e) {
+      throw new Error(e.message)
+
     }
   }
 };
