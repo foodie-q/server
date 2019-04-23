@@ -17,11 +17,11 @@ router
         }
       })
   })
-  .get('/', (req, res) => {
-    let keyRandom = `1`;
+  .get('/:table', (req, res) => {
+    let keyRandom = req.params.table;
     qrcode.toDataURL(keyRandom, {errorCorrectionLevel: "H", type: "image/png"}, (err, data) => {
       if (err) {
-        console.error(err);
+        res.status(500).json(err.message)
       }
       res.render('qrcode', {
         img: data,

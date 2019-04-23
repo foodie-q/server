@@ -38,6 +38,14 @@ module.exports = {
       throw new Error(e.message)
     }
   },
+  // findById: async (userId) => {
+  //   try {
+  //     let user = await dbUsers.doc(userId).get();
+  //     return { id: user.id, ...user.data() };
+  //   } catch (e) {
+  //     throw new Error(e.message)
+  //   }
+  // },
   createSaldo: async (objCreate) => {
     let userId = objCreate.userId
     objCreate = { ...objCreate, userId: dbUsers.doc(objCreate.userId) }

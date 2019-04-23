@@ -37,13 +37,9 @@ router.post('/', function (req, res, next) {
 })
 
 /* EDIT menus  */
-router.put('/:menuId', function (req, res, next) {
-  res.send('...')
-})
+
 
 /* DELETE menus  */
-router.delete('/:menuId', function (req, res, next) {
-  res.send('...')
-})
+
 
 module.exports = router;
