@@ -117,9 +117,7 @@ router.get('/:id', function (req, res, next) {
 })
 
 router.post('/saldo', function (req, res, next) {
-  console.log(req.body,'<<<<,,');
-  
-  createSaldo({ ...req.body.payload, userId: dbUsers.doc(req.body.payload.userId) })
+  createSaldo(req.body.payload)
     .then(saldo => {
       res.status(200).json(saldo)
     })
