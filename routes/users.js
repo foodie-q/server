@@ -2,13 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { createOrder } = require('../helpers/firebase/orders')
 const { dbUsers, auth } = require('../helpers/firebase/index')
-const { getSaldo, findById, createSaldo, getBalanceHistory } = require('../helpers/firebase/users')
+const { getSaldo, createSaldo, getBalanceHistory } = require('../helpers/firebase/users')
+const { findById } = require('../helpers/firebase/orders')
 
 
-/* GET users listing. */
-// router.get('/', function (req, res, next) {
-//   res.send('respond with a resource');
-// });
 
 router.post('/register', function (req, res, next) {
   let uid
@@ -27,7 +24,6 @@ router.post('/register', function (req, res, next) {
     })
     .then(() => {
       let unsub = auth.onAuthStateChanged(firebaseUser => {
-        // unsub()
         if (firebaseUser) {
           dbUsers.doc(firebaseUser.uid).get()
             .then(user => {
@@ -132,7 +128,7 @@ router.post('/order', function (req, res, next) {
     })
 })
 
-router.get('/:id', function (req, res, next) {
+router.get('/order/:id', function (req, res, next) {
   findById(req.params.id)
     .then(user => {
       res.status(200).json(user)
