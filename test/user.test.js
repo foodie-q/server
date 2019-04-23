@@ -478,6 +478,26 @@ describe(`testing endpoint user`, function () {
 
     })
 
+    describe(`GET /allbalance/:id for find total balance`, function () {
+        describe(`GET /allbalance/:id  success case`, function () {
+            it(`should send response with status code 200, and send an object`, function (done) {
+                this.timeout(6000)
+                
+                chai
+                    .request(app)
+                    .get(`/users/allbalance/${uid}`)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(200)
+                        expect(res.body).to.be.an('array')
+                        done()
+                    })
+            })
+        })
+
+
+    })
+
     describe(`POST /users/logout for user logout`, function () {
         describe(`POST /users/logout success case`, function () {
             it(`should send response with status code 200, and is an object when user logout`, function (done) {

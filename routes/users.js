@@ -3,7 +3,6 @@ const router = express.Router();
 const { createOrder } = require('../helpers/firebase/orders')
 const { dbUsers, auth } = require('../helpers/firebase/index')
 const { getSaldo, createSaldo, getBalanceHistory } = require('../helpers/firebase/users')
-const { getSaldo, createSaldo } = require('../helpers/firebase/users')
 const { findById } = require('../helpers/firebase/orders')
 
 
