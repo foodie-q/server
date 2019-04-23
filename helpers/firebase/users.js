@@ -23,7 +23,17 @@ module.exports = {
   findById: async (userId) => {
     try {
       let user = await dbUsers.doc(userId).get();
-      return { id: user.id, ...user.data() };
+      const allBalance = await dbSaldo.where('userId', '==', dbUsers.doc(userId)).orderBy('createdAt', 'desc').get();
+
+      let payload = await Promise.all(
+        allBalance.docs.map(async (doc) => {
+          let data = { id: doc.id, ...doc.data() };
+          delete data.userId
+          return data
+        })
+      );
+
+      return { id: user.id, saldo: payload, ...user.data() };
     } catch (e) {
       throw new Error(e.message)
     }
@@ -48,6 +58,25 @@ module.exports = {
         return numberToRupiah(moneyIn - moneyOut);
       }
     } catch (error) {
+      throw new Error(error.message)
+    }
+  },
+  getBalanceHistory: async (userId) => {
+    try {
+      const allBalance = await dbSaldo.where('userId', '==', dbUsers.doc(userId)).orderBy('createdAt', 'desc').get();
+
+      let payload = await Promise.all(
+        allBalance.docs.map(async (doc) => {
+          let data = { id: doc.id, ...doc.data() };
+          delete data.userId
+          return data
+        })
+      );
+
+      return payload
+    } catch (error) {
+      console.log(error);
+
       throw new Error(error.message)
     }
   }

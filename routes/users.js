@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createOrder } = require('../helpers/firebase/orders')
 const { dbUsers, auth } = require('../helpers/firebase/index')
-const { getSaldo, findById, createSaldo } = require('../helpers/firebase/users')
+const { getSaldo, findById, createSaldo, getBalanceHistory } = require('../helpers/firebase/users')
 
 
 /* GET users listing. */
@@ -51,7 +51,7 @@ router.post('/register', function (req, res, next) {
       })
     })
     .catch(err => {
-      
+
       res.status(500).json(err)
     })
 
@@ -62,7 +62,7 @@ router.post('/login', function (req, res, next) {
     .then(user => {
       // console.log(user.user)
       // res.status(200).json({ uid: user.user.uid})
-     let unsub = auth.onAuthStateChanged(firebaseUser => {
+      let unsub = auth.onAuthStateChanged(firebaseUser => {
         if (firebaseUser) {
           // res.status(200).json(firebaseUser)
           dbUsers.doc(firebaseUser.uid).get()
@@ -77,7 +77,7 @@ router.post('/login', function (req, res, next) {
       })
     })
     .catch(err => {
-      
+
       res.status(500).json(err)
     })
 })
@@ -106,6 +106,16 @@ router.get('/saldo/:id', function (req, res, next) {
   getSaldo(req.params.id)
     .then(saldo => {
       res.status(200).json(saldo)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+router.get('/allbalance/:id', function (req, res, next) {
+  getBalanceHistory(req.params.id)
+    .then(allBalance => {
+      res.status(200).json(allBalance)
     })
     .catch(err => {
       res.status(500).json(err)
