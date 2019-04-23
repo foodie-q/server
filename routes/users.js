@@ -4,17 +4,19 @@ const { createOrder } = require('../helpers/firebase/orders')
 const { dbUsers, auth } = require('../helpers/firebase/index')
 const { getSaldo, findById, createSaldo } = require('../helpers/firebase/users')
 
+
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
+// router.get('/', function (req, res, next) {
+//   res.send('respond with a resource');
+// });
 
 router.post('/register', function (req, res, next) {
-
+  let uid
   auth.createUserWithEmailAndPassword(req.body.email, req.body.password)
     .then(user => {
-      console.log(user.user.uid)
-      console.log(req.body)
+      // console.log(user.user.uid)
+      // console.log(req.body)
+      uid = user.user.uid
       return dbUsers.doc(user.user.uid).set({
         name: req.body.name,
         uid: user.user.uid,
@@ -24,10 +26,22 @@ router.post('/register', function (req, res, next) {
       })
     })
     .then(() => {
-      auth.onAuthStateChanged(firebaseUser => {
+      let unsub = auth.onAuthStateChanged(firebaseUser => {
+        // unsub()
         if (firebaseUser) {
           dbUsers.doc(firebaseUser.uid).get()
             .then(user => {
+              unsub()
+              res.status(201).json(user.data())
+            })
+            .catch(err => {
+              throw new Error(err.message)
+            })
+        }
+        else {
+          dbUsers.doc(uid).get()
+            .then(user => {
+              unsub()
               res.status(201).json(user.data())
             })
             .catch(err => {
@@ -37,7 +51,7 @@ router.post('/register', function (req, res, next) {
       })
     })
     .catch(err => {
-      console.log(err)
+      
       res.status(500).json(err)
     })
 
@@ -48,12 +62,13 @@ router.post('/login', function (req, res, next) {
     .then(user => {
       // console.log(user.user)
       // res.status(200).json({ uid: user.user.uid})
-      auth.onAuthStateChanged(firebaseUser => {
+     let unsub = auth.onAuthStateChanged(firebaseUser => {
         if (firebaseUser) {
           // res.status(200).json(firebaseUser)
           dbUsers.doc(firebaseUser.uid).get()
             .then(user => {
               res.status(200).json(user.data())
+              unsub()
             })
             .catch(err => {
               throw new Error(err.message)
@@ -62,21 +77,22 @@ router.post('/login', function (req, res, next) {
       })
     })
     .catch(err => {
-      console.log(err)
+      
       res.status(500).json(err)
     })
 })
 
 router.get('/logout', function (req, res, next) {
-  auth.onAuthStateChanged(firebaseUser => {
+  let unsub = auth.onAuthStateChanged(firebaseUser => {
     if (firebaseUser) {
       auth.signOut()
         .then(() => {
           res.status(200).json({ message: `user ${firebaseUser.email} successs log out` })
+          unsub()
         })
         .catch(err => {
           console.log(err)
-          res.status(500).json(err)
+          throw new Error(err.message)
         })
     }
     else {
