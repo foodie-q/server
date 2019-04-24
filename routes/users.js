@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { createOrder } = require('../helpers/firebase/orders')
 const { dbUsers, auth } = require('../helpers/firebase/index')
-const { getSaldo, createSaldo, getBalanceHistory } = require('../helpers/firebase/users')
-const { findById } = require('../helpers/firebase/orders')
+const { getSaldo, createSaldo, getBalanceHistory, findById } = require('../helpers/firebase/users')
+const order = require('../helpers/firebase/orders')
 
 
 
@@ -129,6 +129,16 @@ router.post('/order', function (req, res, next) {
 })
 
 router.get('/order/:id', function (req, res, next) {
+  order.findById(req.params.id)
+    .then(order => {
+      res.status(200).json(order)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+router.get('/:id', function (req, res, next) {
   findById(req.params.id)
     .then(user => {
       res.status(200).json(user)
