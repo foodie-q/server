@@ -203,7 +203,7 @@ describe(`testing endpoint user`, function () {
 
     describe(`POST /users/saldo for create saldo`, function () {
         describe(`POST /users/saldo success case`, function () {
-            it(`should send response with status code 200, and send an object`, function (done) {
+            it(`should send response with status code 200, and send an object when status is 1`, function (done) {
                 this.timeout(6000)
                 let payload = {
                     userId: uid,
@@ -221,6 +221,28 @@ describe(`testing endpoint user`, function () {
                         expect(res).to.have.status(200)
                         expect(res.body).to.be.an('string')
                         expect(res.body).to.equal('Rp111.111')
+
+                        done()
+                    })
+            })
+            it(`should send response with status code 200, and send an object when status is 0`, function (done) {
+                this.timeout(6000)
+                let payload = {
+                    userId: uid,
+                    createdAt: new Date(),
+                    money: 11111,
+                    status: 0
+                }
+                
+                chai
+                    .request(app)
+                    .post(`/users/saldo`)
+                    .send({ payload: payload })
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(200)
+                        expect(res.body).to.be.an('string')
+                        expect(res.body).to.equal('Rp100.000')
 
                         done()
                     })
@@ -255,41 +277,58 @@ describe(`testing endpoint user`, function () {
 
     })
 
-    describe(`GET /users/saldo/:id for user getting balance`, function () {
-        describe(`GET /saldo/:id success case`, function () {
-            it(`should send response with status code 200, and send an object`, function (done) {
+    describe(`GET /users/:id for getting user data`, function () {
+        describe(`GET /users/:id success case`, function () {
+            it(`should send response with status code 200, and is an object when regular user login`, function (done) {
                 this.timeout(6000)
 
                 chai
                     .request(app)
-                    .get(`/users/saldo/${uid}`)
+                    .get(`/users/${uid}`)
                     .end(function (err, res) {
                         expect(err).to.be.null
                         expect(res).to.have.status(200)
-                        expect(res.body).to.be.an('string')
-                        expect(res.body).to.equal('Rp111.111')
-
+                        expect(res.body).to.be.an('object')
+                        expect(res.body).to.have.property('id')
+                        expect(res.body).to.have.property('name')
+                        expect(res.body).to.have.property('saldo')
+                        expect(res.body.saldo).to.equal('Rp100.000')
                         done()
                     })
             })
-        })
 
-        describe(`GET /saldo/:id fail case`, function () {
-            it(`should send response with status code 404`, function (done) {
+        })
+        describe(`GET /users/:id failed case`, function () {
+            it(`should send response with status code 500 and message 'error', if id dont have saldo`, function (done) {
                 this.timeout(6000)
 
                 chai
                     .request(app)
-                    .get(`/users/saldo/`)
+                    .get(`/users/errorSaldo`)
                     .end(function (err, res) {
                         expect(err).to.be.null
-                        expect(res).to.have.status(404)
-
+                        expect(res).to.have.status(500)
+                        expect(res.body).to.equal('Saldo error!')
                         done()
                     })
+            
+            })
+
+            it(`should send response with status code 500 and message 'error', if id dont have completed data`, function (done) {
+                this.timeout(6000)
+
+                chai
+                    .request(app)
+                    .get(`/users/errorFind`)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(500)
+                        expect(res.body).to.equal('error find id')
+                        done()
+                    })
+            
             })
         })
-
     })
 
     let orderId

@@ -34,16 +34,16 @@ router.post('/register', function (req, res, next) {
               throw new Error(err.message)
             })
         }
-        else {
-          dbUsers.doc(uid).get()
-            .then(user => {
-              unsub()
-              res.status(201).json(user.data())
-            })
-            .catch(err => {
-              throw new Error(err.message)
-            })
-        }
+        // else {
+        //   dbUsers.doc(uid).get()
+        //     .then(user => {
+        //       unsub()
+        //       res.status(201).json(user.data())
+        //     })
+        //     .catch(err => {
+        //       throw new Error(err.message)
+        //     })
+        // }
       })
     })
     .catch(err => {
@@ -66,9 +66,9 @@ router.post('/login', function (req, res, next) {
               res.status(200).json(user.data())
               unsub()
             })
-            .catch(err => {
-              throw new Error(err.message)
-            })
+            // .catch(err => {
+            //   throw new Error(err.message)
+            // })
         }
       })
     })
@@ -86,25 +86,15 @@ router.get('/logout', function (req, res, next) {
           res.status(200).json({ message: `user ${firebaseUser.email} successs log out` })
           unsub()
         })
-        .catch(err => {
-          throw new Error(err.message)
-        })
+        // .catch(err => {
+        //   throw new Error(err.message)
+        // })
     }
-    else {
-      res.status(200).json({ message: 'no one log in' })
-    }
+    // else {
+    //   res.status(200).json({ message: 'no one log in' })
+    // }
   })
 
-})
-
-router.get('/saldo/:id', function (req, res, next) {
-  getSaldo(req.params.id)
-    .then(saldo => {
-      res.status(200).json(saldo)
-    })
-    .catch(err => {
-      res.status(500).json(err)
-    })
 })
 
 router.get('/allbalance/:id', function (req, res, next) {
@@ -112,9 +102,9 @@ router.get('/allbalance/:id', function (req, res, next) {
     .then(allBalance => {
       res.status(200).json(allBalance)
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    // .catch(err => {
+    //   res.status(500).json(err)
+    // })
 })
 
 router.post('/order', function (req, res, next) {
@@ -143,8 +133,7 @@ router.get('/:id', function (req, res, next) {
       res.status(200).json(user)
     })
     .catch(err => {
-      
-      res.status(500).json(err)
+      res.status(500).json(err.message)
     })
 })
 
