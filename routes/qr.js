@@ -20,6 +20,7 @@ router
   .get('/:table', (req, res) => {
     let keyRandom = req.params.table;
     qrcode.toDataURL(keyRandom, {errorCorrectionLevel: "H", type: "image/png"}, (err, data) => {
+      /* istanbul ignore if  */
       if (err) {
         res.status(500).json(err.message)
       }

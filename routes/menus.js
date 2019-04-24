@@ -21,6 +21,7 @@ router.get('/:menuId', function(req,res,next) {
       res.status(200).json(menu)
     })
     .catch(err => {
+      /* istanbul ignore next  */
       res.status(500).json(err)
     })
 })

@@ -7,6 +7,7 @@ const order = require('../helpers/firebase/orders')
 
 
 
+/* istanbul ignore catch  */
 router.post('/register', function (req, res, next) {
   let uid
   auth.createUserWithEmailAndPassword(req.body.email, req.body.password)
@@ -24,8 +25,20 @@ router.post('/register', function (req, res, next) {
     })
     .then(() => {
       let unsub = auth.onAuthStateChanged(firebaseUser => {
+        /* istanbul ignore else  */
         if (firebaseUser) {
           dbUsers.doc(firebaseUser.uid).get()
+            .then(user => {
+              unsub()
+              res.status(201).json(user.data())
+            })
+            .catch(err => {
+              /* istanbul ignore next  */
+              throw new Error(err.message)
+            })
+        }
+        else {
+          dbUsers.doc(uid).get()
             .then(user => {
               unsub()
               res.status(201).json(user.data())
@@ -34,16 +47,6 @@ router.post('/register', function (req, res, next) {
               throw new Error(err.message)
             })
         }
-        // else {
-        //   dbUsers.doc(uid).get()
-        //     .then(user => {
-        //       unsub()
-        //       res.status(201).json(user.data())
-        //     })
-        //     .catch(err => {
-        //       throw new Error(err.message)
-        //     })
-        // }
       })
     })
     .catch(err => {
@@ -66,9 +69,10 @@ router.post('/login', function (req, res, next) {
               res.status(200).json(user.data())
               unsub()
             })
-            // .catch(err => {
-            //   throw new Error(err.message)
-            // })
+            .catch(err => {
+              /* istanbul ignore next  */
+              throw new Error(err.message)
+            })
         }
       })
     })
@@ -80,19 +84,21 @@ router.post('/login', function (req, res, next) {
 
 router.get('/logout', function (req, res, next) {
   let unsub = auth.onAuthStateChanged(firebaseUser => {
+    /* istanbul ignore else  */
     if (firebaseUser) {
       auth.signOut()
         .then(() => {
           res.status(200).json({ message: `user ${firebaseUser.email} successs log out` })
           unsub()
         })
-        // .catch(err => {
-        //   throw new Error(err.message)
-        // })
+        .catch(err => {
+          /* istanbul ignore next  */
+          throw new Error(err.message)
+        })
     }
-    // else {
-    //   res.status(200).json({ message: 'no one log in' })
-    // }
+    else {
+      res.status(200).json({ message: 'no one log in' })
+    }
   })
 
 })
