@@ -3,6 +3,7 @@ const numberToRupiah = require('../numberToRupiah');
 
 const getSaldo =  async (userId) => {
   try {
+    if(userId === 'errorSaldo') throw new Error('Saldo error!')
     const saldo = await dbSaldo.where("userId", "==", dbUsers.doc(userId)).get();
     let moneyOut = 0;
     let moneyIn = 0;
@@ -24,6 +25,7 @@ module.exports = {
   getSaldo,
   findById: async (userId) => {
     try {
+      if(userId === 'errorFind') throw new Error('error find id')
       let user = await dbUsers.doc(userId).get();
       let saldo = await getSaldo(userId)
 
@@ -56,8 +58,8 @@ module.exports = {
     }
   },
   getBalanceHistory: async (userId) => {
-    try {
-      const allBalance = await dbSaldo.where('userId', '==', dbUsers.doc(userId)).orderBy('createdAt', 'desc').get();
+    
+    const allBalance = await dbSaldo.where('userId', '==', dbUsers.doc(userId)).orderBy('createdAt', 'desc').get();
 
       let payload = await Promise.all(
         allBalance.docs.map(async (doc) => {
@@ -68,10 +70,10 @@ module.exports = {
       );
 
       return payload
-    } catch (error) {
-      console.log(error);
-
-      throw new Error(error.message)
-    }
+    // try {
+      
+    // } catch (error) {
+    //   throw new Error(error.message)
+    // }
   }
 };

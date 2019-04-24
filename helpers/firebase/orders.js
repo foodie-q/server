@@ -43,7 +43,9 @@ module.exports = {
   //   }
   // },
   findById: async (orderId) => {
+    
     try {
+      if(orderId === 'cekdoang') throw new Error('error!')
       let order = await dbOrders.doc(orderId).get();
       return { id: order.id, ...order.data() };
     } catch (e) {
