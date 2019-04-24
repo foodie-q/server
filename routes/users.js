@@ -87,7 +87,6 @@ router.get('/logout', function (req, res, next) {
           unsub()
         })
         .catch(err => {
-          console.log(err)
           throw new Error(err.message)
         })
     }
@@ -144,6 +143,7 @@ router.get('/:id', function (req, res, next) {
       res.status(200).json(user)
     })
     .catch(err => {
+      
       res.status(500).json(err)
     })
 })

@@ -10,6 +10,7 @@ router.get('/', function (req, res, next) {
       res.status(200).json(menus)    
     })
     .catch(err => {
+      console.log('ini kepanggil ga pak?')
       res.status(500).json(err)
     })
 });

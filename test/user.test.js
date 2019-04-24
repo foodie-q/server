@@ -27,21 +27,32 @@ describe(`testing endpoint user`, function () {
             defApp.auth().deleteUser(uid),
             dbUsers.doc(uid).delete(),
             dbSaldo.where("userId", "==", dbUsers.doc(uid)).get(),
-            dbOrders.where("userId", "==", uid).get(),
+            
         ])
-            .then(async ([prom1, prom2, prom3, prom4]) => {
+            .then(async ([prom1, prom2, prom3]) => {
                 await prom3.docs.forEach(async (item) => {
                     await dbSaldo.doc(item.id).delete()
                 })
-                await prom4.docs.forEach(async (item) => {
+                
+                done()    
+            })
+            .catch((err) => {
+                console.log(err.message)
+            })      
+    })
+
+    after(function (done) {
+        
+        dbOrders.where("userId", "==", uid).get()
+            .then(order => {
+                order.docs.forEach(async (item) => {
                     await dbOrders.doc(item.id).delete()
                 })
                 done()
             })
             .catch((err) => {
                 console.log(err.message)
-            })
-
+            })      
     })
     let userEmail
     let userPass
@@ -85,6 +96,13 @@ describe(`testing endpoint user`, function () {
         describe(`POST /users/register failed case`, function () {
             it(`should send response with status code 500 and send message 'Password should be at least 6 characters' when user input wrong password`, function (done) {
                 this.timeout(6000)
+
+                // var mockDbMenu = {
+                //     get() {
+                //         return Promise.reject('Testing Error')
+                //     }
+                // }
+
                 let newUser = {
                     email: `dodo@mail.com`,
                     password: `12345`,
@@ -202,7 +220,7 @@ describe(`testing endpoint user`, function () {
                         expect(err).to.be.null
                         expect(res).to.have.status(200)
                         expect(res.body).to.be.an('string')
-                        expect(res.body).to.equal('Rp.111.111')
+                        expect(res.body).to.equal('Rp111.111')
 
                         done()
                     })
@@ -249,8 +267,7 @@ describe(`testing endpoint user`, function () {
                         expect(err).to.be.null
                         expect(res).to.have.status(200)
                         expect(res.body).to.be.an('string')
-                        expect(res.body).to.equal('Rp.111.111')
-                        // expect(res.body.message).to.equal(`user ${userEmail} successs log out`)
+                        expect(res.body).to.equal('Rp111.111')
 
                         done()
                     })
@@ -353,11 +370,11 @@ describe(`testing endpoint user`, function () {
                 
                 chai
                     .request(app)
-                    .get(`/users/order/`)
+                    .get(`/users/order/cekdoang`)
                     
                     .end(function (err, res) {
                         expect(err).to.be.null
-                        expect(res).to.have.status(404)
+                        expect(res).to.have.status(500)
 
                         done()
                     })
