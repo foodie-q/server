@@ -1,5 +1,5 @@
 module.exports = (number) => {
-  return 'Rp.' + Number
+  return 'Rp' + Number
     .parseFloat(+number ? +number : 0)
     .toFixed(0)
     .toString()
