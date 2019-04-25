@@ -10,7 +10,7 @@ const { dbUsers, auth, dbSaldo,dbOrders } = require('../helpers/firebase/index')
 chai.use(chaiHttp)
 
 var admin = require('firebase-admin');
-var serviceAccount = require('../../../key/final-project-anton-zul-felix-firebase-adminsdk-tn10l-3618656653.json')
+var serviceAccount = require('../final-project-anton-zul-felix-firebase-adminsdk-tn10l-3618656653.json')
 var defApp = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://final-project-anton-zul-felix.firebaseio.com"
@@ -27,22 +27,22 @@ describe(`testing endpoint user`, function () {
             defApp.auth().deleteUser(uid),
             dbUsers.doc(uid).delete(),
             dbSaldo.where("userId", "==", dbUsers.doc(uid)).get(),
-            
+
         ])
             .then(async ([prom1, prom2, prom3]) => {
                 await prom3.docs.forEach(async (item) => {
                     await dbSaldo.doc(item.id).delete()
                 })
-                
-                done()    
+
+                done()
             })
             .catch((err) => {
                 console.log(err.message)
-            })      
+            })
     })
 
     after(function (done) {
-        
+
         dbOrders.where("userId", "==", uid).get()
             .then(order => {
                 order.docs.forEach(async (item) => {
@@ -52,7 +52,7 @@ describe(`testing endpoint user`, function () {
             })
             .catch((err) => {
                 console.log(err.message)
-            })      
+            })
     })
     let userEmail
     let userPass
@@ -211,7 +211,7 @@ describe(`testing endpoint user`, function () {
                     money: 111111,
                     status: 1
                 }
-                
+
                 chai
                     .request(app)
                     .post(`/users/saldo`)
@@ -233,7 +233,7 @@ describe(`testing endpoint user`, function () {
                     money: 11111,
                     status: 0
                 }
-                
+
                 chai
                     .request(app)
                     .post(`/users/saldo`)
@@ -247,7 +247,7 @@ describe(`testing endpoint user`, function () {
                         done()
                     })
             })
-            
+
         })
 
         describe(`POST /users/saldo fail case`, function () {
@@ -259,7 +259,7 @@ describe(`testing endpoint user`, function () {
                     money: 11234,
                     status: 1
                 }
-                
+
                 chai
                     .request(app)
                     .post(`/users/saldo`)
@@ -272,7 +272,7 @@ describe(`testing endpoint user`, function () {
                         done()
                     })
             })
-            
+
         })
 
     })
@@ -311,7 +311,7 @@ describe(`testing endpoint user`, function () {
                         expect(res.body).to.equal('Saldo error!')
                         done()
                     })
-            
+
             })
 
             it(`should send response with status code 500 and message 'error', if id dont have completed data`, function (done) {
@@ -326,7 +326,7 @@ describe(`testing endpoint user`, function () {
                         expect(res.body).to.equal('error find id')
                         done()
                     })
-            
+
             })
         })
     })
@@ -341,7 +341,7 @@ describe(`testing endpoint user`, function () {
                     createdAt: new Date(),
                     status: 1
                 }
-                
+
                 chai
                     .request(app)
                     .post(`/users/order`)
@@ -364,7 +364,7 @@ describe(`testing endpoint user`, function () {
                     createdAt: new Date(),
                     status: 1
                 }
-                
+
                 chai
                     .request(app)
                     .post(`/users/order`)
@@ -385,11 +385,11 @@ describe(`testing endpoint user`, function () {
         describe(`GET /users/order/:id success case`, function () {
             it(`should send response with status code 200, and send an object`, function (done) {
                 this.timeout(6000)
-                
+
                 chai
                     .request(app)
                     .get(`/users/order/${orderId}`)
-                    
+
                     .end(function (err, res) {
                         expect(err).to.be.null
                         expect(res).to.have.status(200)
@@ -406,11 +406,11 @@ describe(`testing endpoint user`, function () {
         describe(`GET /users/order/:id fail case`, function () {
             it(`should send response with status code 500`, function (done) {
                 this.timeout(6000)
-                
+
                 chai
                     .request(app)
                     .get(`/users/order/cekdoang`)
-                    
+
                     .end(function (err, res) {
                         expect(err).to.be.null
                         expect(res).to.have.status(500)
@@ -429,9 +429,9 @@ describe(`testing endpoint user`, function () {
                 let payload = {
                     userId: uid,
                     table: 1,
-                    
+
                 }
-                
+
                 chai
                     .request(app)
                     .post(`/qr/`)
@@ -454,9 +454,9 @@ describe(`testing endpoint user`, function () {
                 let payload = {
                     userId: uid,
                     table: "",
-                    
+
                 }
-                
+
                 chai
                     .request(app)
                     .post(`/qr/`)
@@ -477,9 +477,9 @@ describe(`testing endpoint user`, function () {
             //     let payload = {
             //         userId: uid,
             //         table: "",
-                    
+
             //     }
-                
+
             //     chai
             //         .request(app)
             //         .post(`/qr/`)
@@ -520,7 +520,7 @@ describe(`testing endpoint user`, function () {
             it(`should send response with status code 200, and send an object`, function (done) {
                 this.timeout(6000)
                 let table = ''
-                
+
                 chai
                     .request(app)
                     .get(`/qr/${table}`)
@@ -538,7 +538,7 @@ describe(`testing endpoint user`, function () {
         describe(`GET /allbalance/:id  success case`, function () {
             it(`should send response with status code 200, and send an object`, function (done) {
                 this.timeout(6000)
-                
+
                 chai
                     .request(app)
                     .get(`/users/allbalance/${uid}`)
